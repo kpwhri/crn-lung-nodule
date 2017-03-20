@@ -1,6 +1,0 @@
-lung
-chest
-pulmonary
-thorax
-hemithorax
-thoracic

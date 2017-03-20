@@ -9,7 +9,7 @@ from inspect import isgeneratorfunction
 
 from ghri.scott.crn_lung_nodule.classes import sentence, document
 
-from crn_lung_nodule.classes import constants
+from crn_lung_nodule.util import constants
 from crn_lung_nodule.nlp import tokenizer
 
 

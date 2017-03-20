@@ -1,12 +1,12 @@
 import logging
 
-from ghri.scott.crn_lung_nodule.classes.sentence import Sentence
+from crn_lung_nodule.classes.sentence import Sentence
 
-from crn_lung_nodule.classes.constants import *
+from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.sentence_splitter \
     import SentenceSplitterPunktStripped as SentSplitter
 
-logger = logging.getLogger('ghri.scott.crn_lung_nodule.classes.document')
+logger = logging.getLogger('ghri.scott.crn_lung_nodule.util.document')
 
 class Document(object):
     '''

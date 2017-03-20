@@ -22,27 +22,27 @@ DATA_MAPPING = {
     DANFORTH_20130919: {
         # Tables 1.A, 1B
         POS_KEYWORD: [
-                        r'PosKeywordsNoQualReq.txt',
-                        r'PosKeywordsQualReq.txt'
+                        'NOQUAL',
+                        'QUAL'
                     ],
         ABS_DISQUAL_TERM: [
-                        r'AbsDisqualTerm.txt'
+                        'DISQUAL'
                             ],
         EXCLUDED_TERM: [
-                        r'ExcludedWords.txt'
+                        'EXCLUDE'
                         ],
         OFFSETTING_TERM: [
-                          r'OffsettingTerms.txt'
+                          'OFFSET'
                         ],
 
         # Table 1.B
         POS_KEYWORD_NO_QUAL_REQD: [
-                                   r'PosKeywordsNoQualReq.txt'
+                                   'NOQUAL'
                                    ],
 
         # Table 1.A
         POS_KEYWORD_QUAL_REQD: [
-                r'PosKeywordsQualReq.txt'
+                'QUAL'
                                 ]
         }
 }

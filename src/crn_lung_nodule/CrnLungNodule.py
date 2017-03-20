@@ -6,9 +6,9 @@
 # G:\CTRHS\CRN_Lung_Nodule\PROGRAMMING\Scott\Doco\Algorithms_v6_CZ.doc
 '''
 
-from ghri.scott.nlp.tokenizer import Tokenizer
+from crn_lung_nodule.nlp.tokenizer import Tokenizer
 
-from crn_lung_nodule.classes.constants import *
+from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.sentence_splitter import SentenceSplitterPunktStripped
 
 DEFAULT_SENT_SPLITTER = SentenceSplitterPunktStripped

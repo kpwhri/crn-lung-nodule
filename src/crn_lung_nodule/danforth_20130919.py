@@ -12,11 +12,11 @@ import logging
 import os
 from ConfigParser import NoOptionError
 
-from ghri.scott.crn_lung_nodule import ConfigFileParser
-from ghri.scott.crn_lung_nodule import myos
-from ghri.scott.crn_lung_nodule.classes.document import Document
+from crn_lung_nodule import ConfigFileParser
+from crn_lung_nodule import myos
+from crn_lung_nodule.classes.document import Document
 
-from crn_lung_nodule.classes.constants import *
+from crn_lung_nodule.util.constants import *
 
 # get module logger
 logger = logging.getLogger('ghri.scott.crn_lung_nodule.danforth_20130919')

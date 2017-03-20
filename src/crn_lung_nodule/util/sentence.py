@@ -2,10 +2,10 @@ import logging
 
 from ghri.scott.crn_lung_nodule.CrnLungNodule import getLinedData
 
-from crn_lung_nodule.classes.constants import *
+from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp import Tokenizer
 
-logger = logging.getLogger('ghri.scott.crn_lung_nodule.classes.sentence')
+logger = logging.getLogger('ghri.scott.crn_lung_nodule.util.sentence')
 
 class Sentence(object):
     '''
