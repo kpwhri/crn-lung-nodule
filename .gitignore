@@ -1,0 +1,9 @@
+*.suo
+*.pyc
+*.exe
+*.dll
+ghri/scott/vmmc/emailVmmcErr
+ghri/scott/vmmc/emailVmmcOut
+*.exe
+*.dll
+ghri/scott/PROMISE/filter_canned_text/.idea/workspace.xml

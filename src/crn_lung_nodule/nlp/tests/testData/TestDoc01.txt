@@ -1,0 +1,80 @@
+[IMPRESSION].
+Addendum Begins
+This patient has had a CT scan performed on  mm/dd/yy, although
+images are no longer available a report is available and describe  a
+right paravertebral mass spanning in the cranial caudal dimension
+over approximately 11 cm, the appearance was consistent with a cystic
+loculation with some calcium deposit as described on the current
+study.  Based on the description, today's images as well as some
+chest x-rays from yyyy compared to the most recent chest x-ray dated
+mm/dd /yy there is no significant change therefore unlikely to
+explain the patient's symptoms.
+______________________________________
+ 
+Electronically signed by:DOCNAME DOCNAME, MD
+Date: mm/dd/yyyy
+Time:13:56
+Addendum Ends
+IMPRESSION: The mass visualized on the plain film represent a cystic
+extrapulmonary fluid collection located in the cul-de-sac posteriorly
+and medially on the right.  There is calcification within this
+collection which is of uncertain clinical significance.  This most
+likely represent a postpneumonic pleural effusion that is loculated
+and unresolved.  Pulmonary and/or thoracic surgery consultation
+recommended.
+ 
+There is stigmata of from prior granulomatous disease with two
+calcified granulomas , one in the right upper lobe and one in the
+left lower lobe.
+ 
+There is a partially visualized left renal, upper upper pole
+partially calcified mass measuring 14-mm for which further
+investigation is recommended with CT IVP and urology consultation.
+ 
+POSITIVE ALERT :
+Radiology significant finding alert system has been activated.
+ 
+ 
+______________________________________
+ 
+Electronically signed by:DOCNAME DOCNAME, MD
+Date: mm/dd/yyyy
+Time:09:21
+[NARRATIVE].
+mass measuring 11-mm.    Both adrenals are normal.
+renal cortex measuring 14-mm.  It is associated with a soft tissue
+calcification rising from the superior and posterior aspect of the
+In the upper abdomen note is made of a large clear centered
+ 
+measuring 4.3-mm in the inferior costophrenic angle.
+lower lobe.  There is a calcified granuloma on the left side
+there is a nonspecific 4.4-mm nodule in the periphery of the right
+atelectasis in the right lower lobe caused by this collection and
+inferior aspect of the right upper lobe.  There is passive
+There is a highly calcified to 6 mm nodule in the anterior and
+significance .
+mm) within this collection which are of uncertain clinical
+units are consistent with fluid.  There is a few calcifications ( 8
+approximately 11-cm in the craniocaudal dimension.  The Hounsfield
+costophrenic angle.  It measure is 8.7 x 4.9-cm in diameter and
+extrapleural fluid collection in the subpulmonic region and  medial
+ The abnormality visualized on the recent chest x-ray represent an
+ 
+visualized.
+FINDINGS: The mediastinum is unremarkable.  No enlarged lymph nodes
+ 
+COMPARISON: Chest x-ray dated mm/dd/ yy.
+ 
+sagittal reformats were obtained.
+Optiray 320. Images are reconstructed at 3.75 mm. Coronal and
+uneventful intravenous administration of 100 cc non-ionic contrast,
+axial sections from the lung apices to the upper abdomen during
+PROCEDURE: CT, with image acquisition in contiguous 0.623 mm thick
+ 
+CLINICAL HISTORY AND QUESTION: Rule-out right lower chest mass
+ 
+EXAM: Chest CT with contrast mm/dd/yy.
+
+[SAS]: chest pain
+
+[HST]: chest pain with question right lower lobe 8 cm mass on CXR
