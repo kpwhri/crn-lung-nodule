@@ -1,5 +1,10 @@
 import re
 
+ALGORITHMS = [
+    'DANFORTH',
+    'FARJAH'
+]
+
 POS_KEYWORD = 'posKeyword'
 NLP_POSITIVE = 'nlpPositive'
 NLP_NEGATIVE = 'nlpNegative'
