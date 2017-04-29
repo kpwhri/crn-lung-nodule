@@ -5,40 +5,40 @@ from crn_lung_nodule.CrnLungNodule import get_lined_data
 from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.tokenizer import Tokenizer
 
-logger = logging.getLogger('ghri.scott.crn_lung_nodule.util.sentence')
+logger = logging.getLogger('crn_lung_nodule.util.sentence')
 
 
 class Sentence(object):
     """
-    # Scott Halgrim #
-    # 12/20/13 #
     # Basically stores state of a sentence as it goes through classification
     # process as described in
-    # G:\CTRHS\CRN_Lung_Nodule\PROGRAMMING\Scott\Doco\NLP_algorithm_Revisions_(09
-    # 19 2013)_CZ.doc
+    # NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
     """
 
     def __init__(self, text, doc, psm=TOKENS, r6psm=None):
+        """
+        
+        :param text: 
+        :param doc: 
+        :param psm: 
+        :param r6psm: rule6 phrase search method 
+        """
         self.dcmt = doc
         self.text = text
         self.tokens = []
         self.tags = {}
-        self.phraseSearchMethod = psm  # do we search for phrases by tokens or just string?
-        self.rule6PhraseSearchMethod = r6psm if r6psm else psm
-        self.maxNoduleSize = -1
-        logger.debug('Created Sentence for %s with %d characters' % \
-                     (self.dcmt.fn, len(self.text)))
-        return
+        self.psm = psm  # do we search for phrases by tokens or just string?
+        self.r6psm = r6psm if r6psm else psm
+        self.max_nodule_size = -1
+        logger.debug('Created Sentence for {} with {} characters'.format(self.dcmt.name, len(self.text)))
 
-    def tokenize(self):
-        tknzr = Tokenizer(self.text)
-        self.tokens, errcode = tknzr.tokenize()
-
+    def tokenize(self, text):
+        tknzr = Tokenizer(text)
+        tokens, errcode = tknzr.tokenize()
         if errcode:
-            logger.warning('Errcode %d in file %s' % (errcode, self.dcmt.fn))
-
-        logger.debug('Tokenized into %d tokens' % (len(self.tokens)))
-        return self.tokens
+            logger.warning('Errcode {} in file {}'.format(errcode, self.dcmt.name))
+        logger.debug('Tokenized into {} tokens'.format(len(tokens)))
+        return tokens
 
     def has_tag(self, tag):
         """
@@ -67,203 +67,136 @@ class Sentence(object):
             logger.debug('Changing %s from %s to %s'.format(thing, self.tags[thing], val))
         self.tags[thing] = val
 
-    def hasTokens(self, targetPhrase):
+    def get_tokens(self):
+        if not self.tokens:
+            self.tokens = self.tokenize(self.text)
+        return self.tokens
+
+    def has_tokens(self, target_phrase):
         """
         # returns True if the tokenized target phrase is inside the tokenized sentence.
         # TODO: improve tokenization
         """
-        answer = False
+        sent_tokens = [tok.lower() for tok in self.get_tokens()]
+        phrase_tokens = [t.lower() for t in self.tokenize(target_phrase)]
+        for i in range(len(sent_tokens) - (len(phrase_tokens) - 1)):
+            if sent_tokens[i:i + len(phrase_tokens)] == phrase_tokens:
+                return True
+        return False
 
-        if not self.tokens:
-            self.tokenize()
+    def has_string(self, strphrase):
+        return strphrase.lower() in self.text.lower()
 
-        sentTokens = [tok.lower() for tok in self.tokens]
-        phraseTknzr = Tokenizer(targetPhrase)
-        phraseTokens, errcode = phraseTknzr.tokenize()
-
-        if errcode:
-            logger.warning('Errcode %d in file %s' % (errcode, self.dcmt.fn))
-
-        phraseTokens = [tok.lower() for tok in phraseTokens]
-        sentTokenLen = len(sentTokens)
-        phraseTokenLen = len(phraseTokens)
-
-        for i in range(sentTokenLen - (phraseTokenLen - 1)):
-            sentSlice = sentTokens[i:i + phraseTokenLen]
-
-            if sentSlice == phraseTokens:
-                answer = True
-                break
-
-        return answer
-
-    def hasString(self, strphrase):
-        if strphrase.lower() in self.text.lower():
-            answer = True
-        else:
-            answer = False
-
-        return answer
-
-    def hasPhrase(self, phr, rule6=False):
+    def has_phrase(self, phr, rule6=False):
         if rule6:
-            answer = self.PHRASE_SEARCH_METHODS[self.rule6PhraseSearchMethod](self, phr)
-        else:
-            answer = self.PHRASE_SEARCH_METHODS[self.phraseSearchMethod](self, phr)
+            return self.PHRASE_SEARCH_METHODS[self.r6psm](self, phr)
+        return self.PHRASE_SEARCH_METHODS[self.psm](self, phr)
 
-        return answer
-
-    def hasPosKeyword(self, algo=DANFORTH_20130919, rule6PhraseSearchMethod=TOKENS):
+    def has_pos_keyword(self, algo=DANFORTH_20130919, r6psm=TOKENS):
         """
         # From newer Danforth algo, checks to see if sentence has positive
         # keyword. I.e., keyword from Tables 1.A or 1.B #
         # 9/5/14 updating so that it treats tables 1.a and 1.b differently if
         # rule6PhraseSearchMethod set to tokens
         """
-        posKeywordsQualReqd = get_lined_data(algo, POS_KEYWORD_QUAL_REQD)
-        posKeywordsNoQualReqd = get_lined_data(algo, POS_KEYWORD_NO_QUAL_REQD)
+        return self.has_term(POS_KEYWORD_QUAL_REQD, algo, False) or self.has_term(POS_KEYWORD_NO_QUAL_REQD, algo, r6psm)
 
-        for pk in posKeywordsQualReqd:
-            if self.hasPhrase(pk):
-                answer = True
-                self.set_thing(POS_KEYWORD, True)
-                break
-        else:
-            for pk in posKeywordsNoQualReqd:
-                if self.hasPhrase(pk, rule6PhraseSearchMethod):
-                    answer = True
-                    self.set_thing(POS_KEYWORD, True)
-                    break
-            else:
-                answer = False
-
-        return answer
-
-    def hasAbsDisqualTerm(self, algo=DANFORTH_20130919):
+    def has_abs_disqual_term(self, algo=DANFORTH_20130919):
         """
         # Step 2 in newer Danforth algo. Checks for absolutely disqualifying
         # term (Table 2). TODO: This is virutally identical to hasPosKeyword.
         # Can I do refactoring here? Also see later steps
         """
-        answer = False
-        absDisqualTerms = get_lined_data(algo, ABS_DISQUAL_TERM)
+        return self.has_term(ABS_DISQUAL_TERM, algo, False)
 
-        for adt in absDisqualTerms:
-            if self.hasPhrase(adt):
-                answer = True
-                self.set_thing(ABS_DISQUAL_TERM, True)
-                break
-
-        return answer
-
-    def hasExcludedTerm(self, algo=DANFORTH_20130919):
+    def has_excluded_term(self, algo=DANFORTH_20130919):
         """
         # Step 3 in newer Danforth algo. Checks for excluded term (Table 3)
         """
-        answer = False
-        excludedWords = get_lined_data(algo, EXCLUDED_TERM)
+        return self.has_term(EXCLUDED_TERM, algo, False)
 
-        for ew in excludedWords:
-            if self.hasPhrase(ew):
-                answer = True
-                self.set_thing(EXCLUDED_TERM, True)
-                break
-
-        return answer
-
-    def hasOffsettingTerm(self, algo=DANFORTH_20130919):
+    def has_offsetting_term(self, algo=DANFORTH_20130919):
         """
         # Step 4 in newer Danforth algo. Checks for offsetting term (Table 4).
         # TODO: Can I make less read/write to/fron disk for corpus? Maybe by
         # modifying getLinedData to store stuff?
         """
-        for ot in get_lined_data(algo, OFFSETTING_TERM):
-            if self.hasPhrase(ot):
-                self.set_thing(OFFSETTING_TERM, True)
-                return True
-        return False
+        return self.has_term(OFFSETTING_TERM, algo, False)
 
-    def hasPosKeywordNoQualReqd(self, algo=DANFORTH_20130919):
+    def has_pos_keyword_no_qual_reqd(self, algo=DANFORTH_20130919):
         """
         # Step 6 in newer Danforth algo. Checks for pos keyword with no
         # qualifiying term required (Table 1B). #
         # TODO: Can be made more efficient in combo with step 1?
         """
-        posKeywordsNoQualReqd = get_lined_data(algo, POS_KEYWORD_NO_QUAL_REQD)
-        for pknqr in posKeywordsNoQualReqd:
-            if self.hasPhrase(pknqr, True):
-                self.set_thing(POS_KEYWORD_NO_QUAL_REQD, True)
+        return self.has_term(POS_KEYWORD_NO_QUAL_REQD, algo)
+
+    def has_term(self, term, algo=DANFORTH_20130919, r6psm=True):
+        """
+        # Step 6 in newer Danforth algo. Checks for pos keyword with no
+        # qualifiying term required (Table 1B). #
+        # TODO: Can be made more efficient in combo with step 1?
+        """
+        for term in get_lined_data(algo, term):
+            if self.has_phrase(term, r6psm):
+                self.set_thing(term, True)
                 return True
         return False
 
-    def hasSizeGtMm(self, size, reIndex=0):
+    def has_size_gt_mm(self, size, reindex=0):
         """
         # TODO: need test cases
         """
-        return self.calcMaxSize() > size
+        return self.calc_max_size() > size
 
-    def calcMaxSize(self, reIndex=0):
+    def calc_max_size(self, reindex=0):
         """
         # TODO: Refactor. Lots of repeat code here vs hasSizeGtMm.  DONE 9/5/14
         """
-        regex = SIZE_REGEXES[reIndex]
+        regex = SIZE_REGEXES[reindex]
         match = regex.search(self.text)
 
         while match:
-            foundSize = float(match.groupdict()['size'])
+            found_size = float(match.groupdict()['size'])
             dim = match.groupdict()['dim']
 
             if dim == 'c':
-                foundSize *= 10
+                found_size *= 10
 
-            if foundSize > self.maxNoduleSize:
-                self.maxNoduleSize = foundSize
+            if found_size > self.max_nodule_size:
+                self.max_nodule_size = found_size
 
-            nextStart = match.end()
-            match = regex.search(self.text, nextStart)
+            next_start = match.end()
+            match = regex.search(self.text, next_start)
 
-        return self.maxNoduleSize
+        return self.max_nodule_size
 
-    def hasSizeGt30mm(self):
-        return self.hasSizeGtMm(30)
+    def has_size_gt_30_mm(self):
+        return self.has_size_gt_mm(30)
 
-    def hasSizeGt5mm(self):
-        return self.hasSizeGtMm(5)
+    def has_size_gt_5_mm(self):
+        return self.has_size_gt_mm(5)
 
-    def hasSizeGt0mm(self):
-        return self.hasSizeGtMm(0)
+    def has_size_gt_0_mm(self):
+        return self.has_size_gt_mm(0)
 
     EVAL_METHODS = {
-        POS_KEYWORD: hasPosKeyword,
+        POS_KEYWORD: has_pos_keyword,
 
         # putting self as arguments for these lambdas to make consistent with rest
         NLP_POSITIVE: lambda self: False,  # if it's not tagged, it's not nlpPos
         NLP_NEGATIVE: lambda self: False,  # if it's not tagged, it's not nlpNeg
 
-        ABS_DISQUAL_TERM: hasAbsDisqualTerm,
-        EXCLUDED_TERM: hasExcludedTerm,
-        OFFSETTING_TERM: hasOffsettingTerm,
-        POS_KEYWORD_NO_QUAL_REQD: hasPosKeywordNoQualReqd,
-        SIZE_GT_0_MM: hasSizeGt0mm,  # TODO: Way to skip method, put arg of 30 in here?
-        SIZE_GT_30_MM: hasSizeGt30mm,  # TODO: Way to skip method, put arg of 30 in here?
-        SIZE_GT_5_MM: hasSizeGt5mm  # TODO: Way to skip method, put arg of 30 in here?`
+        ABS_DISQUAL_TERM: has_abs_disqual_term,
+        EXCLUDED_TERM: has_excluded_term,
+        OFFSETTING_TERM: has_offsetting_term,
+        POS_KEYWORD_NO_QUAL_REQD: has_pos_keyword_no_qual_reqd,
+        SIZE_GT_0_MM: has_size_gt_0_mm,  # TODO: Way to skip method, put arg of 30 in here?
+        SIZE_GT_30_MM: has_size_gt_30_mm,  # TODO: Way to skip method, put arg of 30 in here?
+        SIZE_GT_5_MM: has_size_gt_5_mm  # TODO: Way to skip method, put arg of 30 in here?`
     }
 
-    PHRASE_SEARCH_METHODS = \
-        {
-            TOKENS: hasTokens,
-            STRING: hasString
-        }
-
-    # EVAL_METHODS = \
-    #    {
-    #     POS_KEYWORD: self.hasPosKeyword,
-    #     NLP_POSITIVE: lambda: False, # if it's not tagged, it's not nlpPos
-    #     NLP_NEGATIVE: lambda: False, # if it's not tagged, it's not nlpNeg
-    #     ABS_DISQUAL_TERM: self.hasAbsDisqualTerm,
-    #     EXCLUDED_TERM: self.hasExcludedTerm,
-    #     OFFSETTING_TERM: self.hasOffsettingTerm,
-    #     POS_KEYWORD_NO_QUAL_REQD: self.hasPosKeywordNoQualReqd,
-    #     SIZE_GT_30_MM: self.hasSizeGt30mm, # TODO: Way to skip method, put arg of 30 in here?
-    #     SIZE_GT_5_MM: self.hasSizeGt5mm # TODO: Way to skip method, put arg of 30 in here?`
-    #     }
+    PHRASE_SEARCH_METHODS = {
+        TOKENS: has_tokens,
+        STRING: has_string
+    }

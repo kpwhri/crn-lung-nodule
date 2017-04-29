@@ -18,8 +18,7 @@ class Document(object):
     # 12/20/13 #
     # Basically stores state of a document as it goes through classification
     # process as described in
-    # G:\CTRHS\CRN_Lung_Nodule\PROGRAMMING\Scott\Doco\NLP_algorithm_Revisions_(09
-    # 19 2013)_CZ.doc
+    # NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
     """
 
     def __init__(self, fn, psm, r6psm=None):
@@ -74,14 +73,14 @@ class Document(object):
         return self.ALGORITHMS[algo](self)
 
     def get_max_nodule_size(self, reIndex=0, algo=DANFORTH_20130919):
-        answer = max(sent.maxNoduleSize for sent in self.sentences)
+        answer = max(sent.max_nodule_size for sent in self.sentences)
 
         if answer == -1 and algo == FARJAH_20140903:
             # if we didn't get a max size before, let's try on all sentences
             logger.info(str.format('Calcing size on all sents for document {0}', self.name))
             for sent in self.sentences:
-                sent.calcMaxSize()
-            return max(sent.maxNoduleSize for sent in self.sentences)
+                sent.calc_max_size()
+            return max(sent.max_nodule_size for sent in self.sentences)
         else:
             return answer
 
@@ -160,7 +159,7 @@ class Document(object):
                 sent.set_thing(NLP_POSITIVE, True)
 
                 if algo == FARJAH_20140903:
-                    sent.calcMaxSize()
+                    sent.calc_max_size()
                 continue  # move to next sentence
             else:
                 pass  # keep searching
