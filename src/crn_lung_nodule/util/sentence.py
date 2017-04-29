@@ -1,6 +1,6 @@
 import logging
 
-from crn_lung_nodule.CrnLungNodule import getLinedData
+from crn_lung_nodule.CrnLungNodule import get_lined_data
 
 from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.tokenizer import Tokenizer
@@ -40,7 +40,7 @@ class Sentence(object):
         logger.debug('Tokenized into %d tokens' % (len(self.tokens)))
         return self.tokens
 
-    def isTagged(self, tag):
+    def has_tag(self, tag):
         """
         # Returns true iff tag is in keys AND the value is true #
         #                                                       #
@@ -48,32 +48,24 @@ class Sentence(object):
         # the document level if you are checking for tags you don't want to eval
         # something if it never should have reached that step in the flow.
         """
-        if tag in self.tags:
-            answer = self.tags[tag]
-        else:
-            answer = False
+        return self.tags.get(tag, False)
 
-        return answer
+    def eval_thing(self, thing_to_eval):
+        """
+        
+        :param thing_to_eval: 
+        :return: function corresponding thing_to_eval
+        """
+        if thing_to_eval not in self.tags:
+            self.tags[thing_to_eval] = self.EVAL_METHODS[thing_to_eval](self)
+            logger.info('{0}\t{1}'.format(thing_to_eval, self.tags[thing_to_eval]))
+        return self.tags[thing_to_eval]
 
-    def evalThing(self, thingToEval, ruleNum=0):
-        if thingToEval in self.tags:
-            answer = self.tags[thingToEval]
-        else:
-            answer = self.EVAL_METHODS[thingToEval](self)
-            self.tags[thingToEval] = answer
-
-            if ruleNum:
-                logger.info(str.format('Rule {0}\t{1}\t{2}',
-                                       ruleNum, thingToEval, answer))
-
-        return answer
-
-    def setThing(self, thing, val):
-        if thing in self.tags and self.tags[thing] != val:
-            logger.debug('Changing %s from %s to %s' % \
-                         (thing, self.tags[thing], val))
+    def set_thing(self, thing, val):
+        prev_val = self.tags.get(thing, None)
+        if prev_val and prev_val != val:
+            logger.debug('Changing %s from %s to %s'.format(thing, self.tags[thing], val))
         self.tags[thing] = val
-        return
 
     def hasTokens(self, targetPhrase):
         """
@@ -128,19 +120,19 @@ class Sentence(object):
         # 9/5/14 updating so that it treats tables 1.a and 1.b differently if
         # rule6PhraseSearchMethod set to tokens
         """
-        posKeywordsQualReqd = getLinedData(algo, POS_KEYWORD_QUAL_REQD)
-        posKeywordsNoQualReqd = getLinedData(algo, POS_KEYWORD_NO_QUAL_REQD)
+        posKeywordsQualReqd = get_lined_data(algo, POS_KEYWORD_QUAL_REQD)
+        posKeywordsNoQualReqd = get_lined_data(algo, POS_KEYWORD_NO_QUAL_REQD)
 
         for pk in posKeywordsQualReqd:
             if self.hasPhrase(pk):
                 answer = True
-                self.setThing(POS_KEYWORD, True)
+                self.set_thing(POS_KEYWORD, True)
                 break
         else:
             for pk in posKeywordsNoQualReqd:
                 if self.hasPhrase(pk, rule6PhraseSearchMethod):
                     answer = True
-                    self.setThing(POS_KEYWORD, True)
+                    self.set_thing(POS_KEYWORD, True)
                     break
             else:
                 answer = False
@@ -154,12 +146,12 @@ class Sentence(object):
         # Can I do refactoring here? Also see later steps
         """
         answer = False
-        absDisqualTerms = getLinedData(algo, ABS_DISQUAL_TERM)
+        absDisqualTerms = get_lined_data(algo, ABS_DISQUAL_TERM)
 
         for adt in absDisqualTerms:
             if self.hasPhrase(adt):
                 answer = True
-                self.setThing(ABS_DISQUAL_TERM, True)
+                self.set_thing(ABS_DISQUAL_TERM, True)
                 break
 
         return answer
@@ -169,12 +161,12 @@ class Sentence(object):
         # Step 3 in newer Danforth algo. Checks for excluded term (Table 3)
         """
         answer = False
-        excludedWords = getLinedData(algo, EXCLUDED_TERM)
+        excludedWords = get_lined_data(algo, EXCLUDED_TERM)
 
         for ew in excludedWords:
             if self.hasPhrase(ew):
                 answer = True
-                self.setThing(EXCLUDED_TERM, True)
+                self.set_thing(EXCLUDED_TERM, True)
                 break
 
         return answer
@@ -185,9 +177,9 @@ class Sentence(object):
         # TODO: Can I make less read/write to/fron disk for corpus? Maybe by
         # modifying getLinedData to store stuff?
         """
-        for ot in getLinedData(algo, OFFSETTING_TERM):
+        for ot in get_lined_data(algo, OFFSETTING_TERM):
             if self.hasPhrase(ot):
-                self.setThing(OFFSETTING_TERM, True)
+                self.set_thing(OFFSETTING_TERM, True)
                 return True
         return False
 
@@ -197,10 +189,10 @@ class Sentence(object):
         # qualifiying term required (Table 1B). #
         # TODO: Can be made more efficient in combo with step 1?
         """
-        posKeywordsNoQualReqd = getLinedData(algo, POS_KEYWORD_NO_QUAL_REQD)
+        posKeywordsNoQualReqd = get_lined_data(algo, POS_KEYWORD_NO_QUAL_REQD)
         for pknqr in posKeywordsNoQualReqd:
             if self.hasPhrase(pknqr, True):
-                self.setThing(POS_KEYWORD_NO_QUAL_REQD, True)
+                self.set_thing(POS_KEYWORD_NO_QUAL_REQD, True)
                 return True
         return False
 

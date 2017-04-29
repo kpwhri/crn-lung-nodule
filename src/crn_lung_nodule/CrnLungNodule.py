@@ -14,63 +14,57 @@ from crn_lung_nodule.nlp.sentence_splitter import SentenceSplitterPunktStripped
 DEFAULT_SENT_SPLITTER = SentenceSplitterPunktStripped
 
 
-def textToSentences(text, splitter=DEFAULT_SENT_SPLITTER):
+def ssplit(text, splitter=DEFAULT_SENT_SPLITTER):
     """
     # Splits text string into list of sentence text strings using splitter.
     # splitter must have tokenize method
     """
-    return splitter.tokenize(text)
+    return splitter().tokenize(text)
 
 
-def fileToSentences(fn, splitter=DEFAULT_SENT_SPLITTER):
+def file_to_sentences(fn, splitter=DEFAULT_SENT_SPLITTER):
     """
     # Splits text in a file into list of sentence text strings using splitter.
     # splitter must have tokenize method
     """
     with open(fn) as f:
         text = f.read()
-    return textToSentences(text, splitter)
+    return ssplit(text, splitter)
 
 
-def tokenizeSentence(sentence):
-    tknzr = Tokenizer(sentence)
-    answer = tknzr.tokenize()
-
-    return answer
+def tokenize_sentence(sentence):
+    return Tokenizer(sentence).tokenize()[0]  # index 0 is the sentence
 
 
-def sentContainKeywordList(sentence, kwlist):
-    # lowercase and tokenize sentence, convert to set
-    sentWordSet = set(tokenizeSentence(sentence.lower()))
-
-    # lowercase keyword list and convert to set
-    kwset = set([kw.lower() for kw in kwlist])
-
+def has_keyword(sentence, kwlist):
+    """
+    
+    :param sentence: 
+    :param kwlist: 
+    :return: True if token is in keyword list 
+    """
+    words = set(tokenize_sentence(sentence.lower()))
+    keywords = {kw.lower() for kw in kwlist}
     # if any tokens are in kwset, set answer to true
-    answer = len(sentWordSet.intersection(kwset)) > 0
-
-    return answer
+    return bool(words & keywords)
 
 
-def sentContainKeywordFile(sentence, kwfn):
+def sent_has_keyword(sentence, kwfn):
+    lines = []
     with open(kwfn) as f:
-        lines = f.readlines(kwfn)
-    lines = [line.strip().lower() for line in lines]
-    answer = sentContainKeywordList(sentence, lines)
-
-    return answer
+        for line in f:
+            lines.append(line.strip())
+    return has_keyword(sentence, lines)
 
 
-def getLinedData(algorithm, datatype):
+def get_lined_data(algorithm, datatype):
     """
     # Separating code from data. This will basically just map the type of data
     # wanted for the algorithm with the file where that data is kept.
     """
     answer = []
-
     for fn in DATA_MAPPING[algorithm][datatype]:
         with open(fn) as f:
             lines = f.readlines()
         answer += [line.strip() for line in lines]
-
     return answer

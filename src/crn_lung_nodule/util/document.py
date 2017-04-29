@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import List
 
 from crn_lung_nodule.util.sentence import Sentence
 
@@ -8,6 +9,7 @@ from crn_lung_nodule.nlp.sentence_splitter \
     import SentenceSplitterPunktStripped as SentSplitter
 
 logger = logging.getLogger('ghri.scott.crn_lung_nodule.util.document')
+SENT_SPLITTER = SentSplitter()
 
 
 class Document(object):
@@ -22,34 +24,31 @@ class Document(object):
 
     def __init__(self, fn, psm, r6psm=None):
         self.name = os.path.basename(fn)
+        self.contents = None
         with open(fn) as f:
             self.contents = f.read()
         self.psm = psm
         self.r6psm = r6psm if r6psm else psm
-        self.sentences = []
+        self.sentences = self._ssplit()
 
         logger.debug('Document {} created with {} characters'.format(self.name, len(self.contents)))
 
-    def sentencify(self):
-        sent_splitter = SentSplitter()
-        text_sentences = sent_splitter.tokenize(self.contents)
+    def _ssplit(self) -> List[Sentence]:
+        text_sentences = SENT_SPLITTER.tokenize(self.contents)
         self.sentences = [Sentence(ts, self, self.psm, self.r6psm)
                           for ts in text_sentences]
-        logger.debug('Split %s into %d sentences' %
-                     (self.name, len(text_sentences)))
+        logger.debug('Split %s into %d sentences'.format(self.name, len(text_sentences)))
         return text_sentences
 
     def danforth20130919(self):
         answer = False
         for sent in self.sentences:
-            if sent.isTagged(SIZE_GT_30_MM):
-                logger.info(str.format('Document has sentence tagged {0}', SIZE_GT_30_MM))
-                answer = False
-                break
-            elif sent.isTagged(NLP_POSITIVE):
-                logger.info(str.format('Document has sentence tagged {0}', NLP_POSITIVE))
+            if sent.has_tag(SIZE_GT_30_MM):
+                logger.info('Document has sentence tagged {}'.format(SIZE_GT_30_MM))
+                return False
+            elif sent.has_tag(NLP_POSITIVE):
+                logger.info('Document has sentence tagged {}'.format(NLP_POSITIVE))
                 answer = True
-
         return answer
 
     def farjah20140903(self):
@@ -57,7 +56,7 @@ class Document(object):
         # Returns true if any sentence tagged NLP_POSITIVE, else False
         """
         for sent in self.sentences:
-            if sent.isTagged(NLP_POSITIVE):
+            if sent.has_tag(NLP_POSITIVE):
                 logger.info(str.format('Document has sentence tagged {0}', NLP_POSITIVE))
                 answer = True
                 break
@@ -66,59 +65,48 @@ class Document(object):
 
         return answer
 
-    def isPositive(self, algo=DANFORTH_20130919):
+    def is_positive(self, algo=DANFORTH_20130919):
         """
         # And here we have the meat of the algorithm. TODO: need test cases
         """
         logger.info(str.format('processing document {0}', self.name))
         self.processSentences(algo)
-        answer = self.ALGORITHMS[algo](self)
+        return self.ALGORITHMS[algo](self)
 
-        return answer
-
-    def getMaxNoduleSize(self, reIndex=0, algo=DANFORTH_20130919):
-        try:
-            answer = max([sent.maxNoduleSize for sent in self.sentences])
-        except AttributeError:
-            self.sentencify()
-            answer = max([sent.maxNoduleSize for sent in self.sentences])
+    def get_max_nodule_size(self, reIndex=0, algo=DANFORTH_20130919):
+        answer = max(sent.maxNoduleSize for sent in self.sentences)
 
         if answer == -1 and algo == FARJAH_20140903:
             # if we didn't get a max size before, let's try on all sentences
             logger.info(str.format('Calcing size on all sents for document {0}', self.name))
-
             for sent in self.sentences:
                 sent.calcMaxSize()
-
-            answer = max([sent.maxNoduleSize for sent in self.sentences])
-
-        return answer
+            return max(sent.maxNoduleSize for sent in self.sentences)
+        else:
+            return answer
 
     def processSentences(self, algo=DANFORTH_20130919):
-        prevSent = None
-
         try:
             enumerator = enumerate(self.sentences)
         except AttributeError:
-            self.sentencify()
+            self._ssplit()
             enumerator = enumerate(self.sentences)
 
+        prev_sent: Sentence = None
         for i, sent in enumerator:
             logger.info(str.format('Processing sentence {0}: {1}', i + 1, sent.text))
 
-            # have to set prevSent at top of loop due to all the continues
-            if i == 0:
-                prevSent = None
-            else:
-                prevSent = self.sentences[i - 1]
+            # have to set prev_sent at top of loop due to all the continues
+            if i > 0:
+                prev_sent = self.sentences[i - 1]
 
             # Step 1
             logger.debug('Entering step 1 for sent %d' % (i + 1))
-            if sent.evalThing(POS_KEYWORD, 1):
+            if sent.eval_thing(POS_KEYWORD, 1):
                 pass  # tagging done in evaluateThing
             else:
-                if prevSent and prevSent.evalThing(POS_KEYWORD, 1) \
-                        and prevSent.evalThing(NLP_POSITIVE, 1):
+                if prev_sent and prev_sent.eval_thing(POS_KEYWORD, 1) \
+                        and prev_sent.eval_thing(NLP_POSITIVE, 1):
 
                     # continuing to search in step 1
                     # NB: algo says don't tag
@@ -126,38 +114,38 @@ class Document(object):
                 else:
                     # go to next sentence
                     logger.info(str.format('Rule 1\t{0}\tTrue', NLP_NEGATIVE))
-                    sent.setThing(NLP_NEGATIVE, True)
+                    sent.set_thing(NLP_NEGATIVE, True)
                     continue
 
                     # Step 2
             logger.debug('Entering step 2 for sent %d' % (i + 1))
 
-            if not sent.evalThing(ABS_DISQUAL_TERM, 2):
+            if not sent.eval_thing(ABS_DISQUAL_TERM, 2):
                 pass  # "keep searching this sentence"
             else:
                 # go to next sentence
                 logger.info(str.format('Rule 2\t{0}\tTrue', NLP_NEGATIVE))
-                sent.setThing(NLP_NEGATIVE, True)
+                sent.set_thing(NLP_NEGATIVE, True)
                 continue
 
                 # Step 3
             logger.debug('Entering step 3 for sent %d' % (i + 1))
-            sent.evalThing(EXCLUDED_TERM, 3)  # tagging done in eval
+            sent.eval_thing(EXCLUDED_TERM, 3)  # tagging done in eval
 
             # Step 4
             logger.debug('Entering step 4 for sent %d' % (i + 1))
-            sent.evalThing(OFFSETTING_TERM, 4)  # tagging done in eval
+            sent.eval_thing(OFFSETTING_TERM, 4)  # tagging done in eval
 
             # Step 5
             logger.debug('Entering step 5 for sent %d' % (i + 1))
-            if not sent.isTagged(EXCLUDED_TERM):
+            if not sent.has_tag(EXCLUDED_TERM):
                 pass  # continue searching sentence
             else:
-                if sent.isTagged(OFFSETTING_TERM):
+                if sent.has_tag(OFFSETTING_TERM):
                     pass  # continue searching sentence
                 else:
                     logger.info(str.format('Rule 5\t{0}\tTrue', NLP_NEGATIVE))
-                    sent.setThing(NLP_NEGATIVE, True)
+                    sent.set_thing(NLP_NEGATIVE, True)
                     continue  # move on to next sentence
 
                     # Step 6
@@ -167,9 +155,9 @@ class Document(object):
             #    logger.info(str.format('Rule 6\t{0}\tTrue', NLP_POSITIVE))
             # else:
             logger.debug('Entering step 6 for sent %d' % (i + 1))
-            if sent.evalThing(POS_KEYWORD_NO_QUAL_REQD):
+            if sent.eval_thing(POS_KEYWORD_NO_QUAL_REQD):
                 logger.info(str.format('Rule 6\t{0}\tTrue', NLP_POSITIVE))
-                sent.setThing(NLP_POSITIVE, True)
+                sent.set_thing(NLP_POSITIVE, True)
 
                 if algo == FARJAH_20140903:
                     sent.calcMaxSize()
@@ -179,16 +167,16 @@ class Document(object):
 
             # Step 7
             logger.debug('Entering step 7 for sent %d' % (i + 1))
-            if algo == FARJAH_20140903 and sent.evalThing(SIZE_GT_0_MM, 7):
+            if algo == FARJAH_20140903 and sent.eval_thing(SIZE_GT_0_MM, 7):
                 logger.info(str.format('Rule 7_Farjah\t{0}\tTrue', NLP_POSITIVE))
-                sent.setThing(NLP_POSITIVE, True)
-            elif sent.evalThing(SIZE_GT_30_MM, 7):
+                sent.set_thing(NLP_POSITIVE, True)
+            elif sent.eval_thing(SIZE_GT_30_MM, 7):
                 logger.info(str.format('Rule 7_Danforth\t{0}\tTrue', NLP_NEGATIVE))
-                sent.setThing(NLP_NEGATIVE, True)
+                sent.set_thing(NLP_NEGATIVE, True)
                 continue  # move on to next sentence
-            elif sent.evalThing(SIZE_GT_5_MM, 7):
+            elif sent.eval_thing(SIZE_GT_5_MM, 7):
                 logger.info(str.format('Rule 7_Danforth\t{0}\tTrube', NLP_POSITIVE))
-                sent.setThing(NLP_POSITIVE, True)
+                sent.set_thing(NLP_POSITIVE, True)
                 continue  # move on to next sentence
         return
 

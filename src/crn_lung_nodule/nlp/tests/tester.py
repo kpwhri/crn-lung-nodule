@@ -122,7 +122,7 @@ class TokenizerTester(unittest.TestCase):
 
     def test_sizeRegexHyphen(self):
         ''' 6/5/14 Was not recognizing sizes like "11-mm" '''
-        self.assertTrue(self.testSent01_12.evalThing(constants.SIZE_GT_5_MM))
+        self.assertTrue(self.testSent01_12.eval_thing(constants.SIZE_GT_5_MM))
 
 if __name__ == '__main__':
     unittest.main()

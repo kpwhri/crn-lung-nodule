@@ -61,7 +61,7 @@ class Tokenizer:
         try:
             for tkn in myTokenGenerator():
                 tokens.append(tkn)
-        except tokenize.TokenError, e:
+        except tokenize.TokenError as e:
             logger.warning('Silencing TokenError %s after sentence "%s" produced tokens %s'%
                            (e, self.sentence, tokens))
             errcode = -1

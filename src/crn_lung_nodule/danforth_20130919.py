@@ -20,8 +20,8 @@ def process_file(filename, phrase_search_method=TOKENS,
                  get_largest_nodule_size=False,
                  rule6_phrase_search_method=None, algorithm=DANFORTH_20130919):
     doc = Document(filename, phrase_search_method, rule6_phrase_search_method)
-    return (doc.isPositive(algorithm),
-            doc.getMaxNoduleSize() if get_largest_nodule_size else None)
+    return (doc.is_positive(algorithm),
+            doc.get_max_nodule_size() if get_largest_nodule_size else None)
 
 
 def extract(indir, phrase_search_method=TOKENS, get_largest_nodule_size=False,
