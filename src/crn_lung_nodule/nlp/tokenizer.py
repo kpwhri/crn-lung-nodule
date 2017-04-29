@@ -1,10 +1,11 @@
 """
-Scott Halgrim, halgrim.s@ghc.org 
+Scott Halgrim
 Created 11/5/13 for CRN Lung Nodule project 
 """
 
-import token, tokenize
 import logging
+import token
+import tokenize
 
 logger = logging.getLogger('crn_lung_nodule.nlp.tokenizer')
 

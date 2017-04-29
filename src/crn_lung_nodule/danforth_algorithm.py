@@ -1,6 +1,6 @@
 """
-    Scott Halgrim #
-    12/20/13 #
+    Scott Halgrim
+    12/20/13 
     Main script to replicate the modified Danforth algorithm documented best in
     NLP_algorithm_Revisions_(09 19 2013)_CZ.doc. Script will take as input a
     directory of transcripts and its output will be a file indicating which are
