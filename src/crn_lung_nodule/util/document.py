@@ -70,7 +70,7 @@ class Document(object):
         # And here we have the meat of the algorithm. TODO: need test cases
         """
         logger.info(str.format('processing document {0}', self.name))
-        self.processSentences(algo)
+        self.process_sentences(algo)
         return self.ALGORITHMS[algo](self)
 
     def get_max_nodule_size(self, reIndex=0, algo=DANFORTH_20130919):
@@ -85,7 +85,7 @@ class Document(object):
         else:
             return answer
 
-    def processSentences(self, algo=DANFORTH_20130919):
+    def process_sentences(self, algo=DANFORTH_20130919):
         try:
             enumerator = enumerate(self.sentences)
         except AttributeError:
