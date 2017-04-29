@@ -1,9 +1,8 @@
 """
-# Created 10/28/13 #
-# Scott Halgrim, halgrim.s@ghc.org #
-# Written for CRN Lung Nodule project. PI Farhood Farjah. Re-creating algorithm
-# as described in
-# G:\CTRHS\CRN_Lung_Nodule\PROGRAMMING\Scott\Doco\Algorithms_v6_CZ.doc
+Created 10/28/13 
+Scott Halgrim, halgrim.s@ghc.org 
+Written for CRN Lung Nodule project. PI Farhood Farjah. 
+Re-creating algorithm Algorithms_v6_CZ.doc
 """
 
 from crn_lung_nodule.nlp.tokenizer import Tokenizer
@@ -16,16 +15,16 @@ DEFAULT_SENT_SPLITTER = SentenceSplitterPunktStripped
 
 def ssplit(text, splitter=DEFAULT_SENT_SPLITTER):
     """
-    # Splits text string into list of sentence text strings using splitter.
-    # splitter must have tokenize method
+    Splits text string into list of sentence text strings using splitter.
+    splitter must have tokenize method
     """
     return splitter().tokenize(text)
 
 
 def file_to_sentences(fn, splitter=DEFAULT_SENT_SPLITTER):
     """
-    # Splits text in a file into list of sentence text strings using splitter.
-    # splitter must have tokenize method
+    Splits text in a file into list of sentence text strings using splitter.
+    splitter must have tokenize method
     """
     with open(fn) as f:
         text = f.read()
@@ -59,8 +58,8 @@ def sent_has_keyword(sentence, kwfn):
 
 def get_lined_data(algorithm, datatype):
     """
-    # Separating code from data. This will basically just map the type of data
-    # wanted for the algorithm with the file where that data is kept.
+    Separating code from data. This will basically just map the type of data
+    wanted for the algorithm with the file where that data is kept.
     """
     answer = []
     for fn in DATA_MAPPING[algorithm][datatype]:

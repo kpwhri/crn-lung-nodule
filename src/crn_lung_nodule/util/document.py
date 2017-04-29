@@ -8,17 +8,15 @@ from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.sentence_splitter \
     import SentenceSplitterPunktStripped as SentSplitter
 
-logger = logging.getLogger('ghri.scott.crn_lung_nodule.util.document')
+logger = logging.getLogger('crn_lung_nodule.util.document')
 SENT_SPLITTER = SentSplitter()
 
 
 class Document(object):
     """
-    # Scott Halgrim #
-    # 12/20/13 #
-    # Basically stores state of a document as it goes through classification
-    # process as described in
-    # NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
+    Basically stores state of a document as it goes through classification
+    process as described in
+    NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
     """
 
     def __init__(self, fn, psm, r6psm=None):
@@ -52,7 +50,7 @@ class Document(object):
 
     def farjah20140903(self):
         """
-        # Returns true if any sentence tagged NLP_POSITIVE, else False
+        Returns true if any sentence tagged NLP_POSITIVE, else False
         """
         for sent in self.sentences:
             if sent.has_tag(NLP_POSITIVE):
@@ -66,13 +64,14 @@ class Document(object):
 
     def is_positive(self, algo=DANFORTH_20130919):
         """
-        # And here we have the meat of the algorithm. TODO: need test cases
+        And here we have the meat of the algorithm. 
+        TODO: need test cases
         """
         logger.info(str.format('processing document {0}', self.name))
         self.process_sentences(algo)
         return self.ALGORITHMS[algo](self)
 
-    def get_max_nodule_size(self, reIndex=0, algo=DANFORTH_20130919):
+    def get_max_nodule_size(self, reindex=0, algo=DANFORTH_20130919):
         answer = max(sent.max_nodule_size for sent in self.sentences)
 
         if answer == -1 and algo == FARJAH_20140903:

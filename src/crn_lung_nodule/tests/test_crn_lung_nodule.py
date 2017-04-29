@@ -5,7 +5,7 @@
 """
 
 import unittest
-from crn_lung_nodule.CrnLungNodule import has_keyword, sent_has_keyword, tokenize_sentence, file_to_sentences, ssplit
+from crn_lung_nodule.crn_lung_nodule import has_keyword, sent_has_keyword, tokenize_sentence, file_to_sentences, ssplit
 
 
 class CrnLungNoduleTester(unittest.TestCase):

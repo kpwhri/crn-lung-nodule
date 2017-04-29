@@ -1,6 +1,6 @@
 import argparse
 
-from crn_lung_nodule.danforth_20130919 import extract
+from crn_lung_nodule.danforth_algorithm import extract
 from crn_lung_nodule.util.constants import ALGORITHMS
 
 

@@ -1,6 +1,6 @@
 import logging
 
-from crn_lung_nodule.CrnLungNodule import get_lined_data
+from crn_lung_nodule.crn_lung_nodule import get_lined_data
 
 from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.tokenizer import Tokenizer
@@ -10,9 +10,9 @@ logger = logging.getLogger('crn_lung_nodule.util.sentence')
 
 class Sentence(object):
     """
-    # Basically stores state of a sentence as it goes through classification
-    # process as described in
-    # NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
+    Basically stores state of a sentence as it goes through classification
+    process as described in
+    NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
     """
 
     def __init__(self, text, doc, psm=TOKENS, r6psm=None):
@@ -42,11 +42,11 @@ class Sentence(object):
 
     def has_tag(self, tag):
         """
-        # Returns true iff tag is in keys AND the value is true #
-        #                                                       #
-        # A way to check to see if previously tagged but not do eval. B/c if on
-        # the document level if you are checking for tags you don't want to eval
-        # something if it never should have reached that step in the flow.
+        Returns true iff tag is in keys AND the value is true #
+                                                              #
+        A way to check to see if previously tagged but not do eval. B/c if on
+        the document level if you are checking for tags you don't want to eval
+        something if it never should have reached that step in the flow.
         """
         return self.tags.get(tag, False)
 
@@ -74,8 +74,8 @@ class Sentence(object):
 
     def has_tokens(self, target_phrase):
         """
-        # returns True if the tokenized target phrase is inside the tokenized sentence.
-        # TODO: improve tokenization
+        returns True if the tokenized target phrase is inside the tokenized sentence.
+        TODO: improve tokenization
         """
         sent_tokens = [tok.lower() for tok in self.get_tokens()]
         phrase_tokens = [t.lower() for t in self.tokenize(target_phrase)]
@@ -94,48 +94,48 @@ class Sentence(object):
 
     def has_pos_keyword(self, algo=DANFORTH_20130919, r6psm=TOKENS):
         """
-        # From newer Danforth algo, checks to see if sentence has positive
-        # keyword. I.e., keyword from Tables 1.A or 1.B #
-        # 9/5/14 updating so that it treats tables 1.a and 1.b differently if
-        # rule6PhraseSearchMethod set to tokens
+        From newer Danforth algo, checks to see if sentence has positive
+        keyword. I.e., keyword from Tables 1.A or 1.B #
+        9/5/14 updating so that it treats tables 1.a and 1.b differently if
+        rule6PhraseSearchMethod set to tokens
         """
         return self.has_term(POS_KEYWORD_QUAL_REQD, algo, False) or self.has_term(POS_KEYWORD_NO_QUAL_REQD, algo, r6psm)
 
     def has_abs_disqual_term(self, algo=DANFORTH_20130919):
         """
-        # Step 2 in newer Danforth algo. Checks for absolutely disqualifying
-        # term (Table 2). TODO: This is virutally identical to hasPosKeyword.
-        # Can I do refactoring here? Also see later steps
+        Step 2 in newer Danforth algo. Checks for absolutely disqualifying
+        term (Table 2). TODO: This is virutally identical to hasPosKeyword.
+        Can I do refactoring here? Also see later steps
         """
         return self.has_term(ABS_DISQUAL_TERM, algo, False)
 
     def has_excluded_term(self, algo=DANFORTH_20130919):
         """
-        # Step 3 in newer Danforth algo. Checks for excluded term (Table 3)
+        Step 3 in newer Danforth algo. Checks for excluded term (Table 3)
         """
         return self.has_term(EXCLUDED_TERM, algo, False)
 
     def has_offsetting_term(self, algo=DANFORTH_20130919):
         """
-        # Step 4 in newer Danforth algo. Checks for offsetting term (Table 4).
-        # TODO: Can I make less read/write to/fron disk for corpus? Maybe by
-        # modifying getLinedData to store stuff?
+        Step 4 in newer Danforth algo. Checks for offsetting term (Table 4).
+        TODO: Can I make less read/write to/fron disk for corpus? Maybe by
+        modifying getLinedData to store stuff?
         """
         return self.has_term(OFFSETTING_TERM, algo, False)
 
     def has_pos_keyword_no_qual_reqd(self, algo=DANFORTH_20130919):
         """
-        # Step 6 in newer Danforth algo. Checks for pos keyword with no
-        # qualifiying term required (Table 1B). #
-        # TODO: Can be made more efficient in combo with step 1?
+        Step 6 in newer Danforth algo. Checks for pos keyword with no
+        qualifiying term required (Table 1B). #
+        TODO: Can be made more efficient in combo with step 1?
         """
         return self.has_term(POS_KEYWORD_NO_QUAL_REQD, algo)
 
     def has_term(self, term, algo=DANFORTH_20130919, r6psm=True):
         """
-        # Step 6 in newer Danforth algo. Checks for pos keyword with no
-        # qualifiying term required (Table 1B). #
-        # TODO: Can be made more efficient in combo with step 1?
+        Step 6 in newer Danforth algo. Checks for pos keyword with no
+        qualifiying term required (Table 1B). #
+        TODO: Can be made more efficient in combo with step 1?
         """
         for term in get_lined_data(algo, term):
             if self.has_phrase(term, r6psm):
@@ -145,13 +145,13 @@ class Sentence(object):
 
     def has_size_gt_mm(self, size, reindex=0):
         """
-        # TODO: need test cases
+        TODO: need test cases
         """
         return self.calc_max_size() > size
 
     def calc_max_size(self, reindex=0):
         """
-        # TODO: Refactor. Lots of repeat code here vs hasSizeGtMm.  DONE 9/5/14
+        TODO: Refactor. Lots of repeat code here vs hasSizeGtMm.  DONE 9/5/14
         """
         regex = SIZE_REGEXES[reindex]
         match = regex.search(self.text)
