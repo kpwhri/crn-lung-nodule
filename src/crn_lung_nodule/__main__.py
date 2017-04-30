@@ -1,5 +1,7 @@
 import argparse
 
+import sys
+
 from crn_lung_nodule.danforth_algorithm import extract
 from crn_lung_nodule.util.constants import ALGORITHMS, TOKENS, PHRASE_SEARCH_METHODS, STRING
 
@@ -28,9 +30,15 @@ def main():
     if not args.r6psm:
         args.r6psm = args.psm
 
-    extract(args.input_dir, args.psm, args.get_largest_nodule_size,
-            args.r6psm, algorithm=args.algorithm, outfn=args.output)
-
+    if args.output:
+        out = open(args.output, 'w')
+    else:
+        out = sys.stdout
+    out.write('File,Decision{}\n'.format(',MaxNoduleSize' if args.get_largest_nodule_size else ''))
+    for args in extract(args.input_dir, args.psm, args.get_largest_nodule_size,
+                        args.r6psm, algorithm=args.algorithm):
+        out.write('{}\n'.format(','.join(str(x) for x in args)))
+    out.close()
 
 if __name__ == '__main__':
     main()

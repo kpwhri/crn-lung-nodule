@@ -1,7 +1,7 @@
 from distutils.core import setup
 import setuptools
 
-setup(name='crn-lung-nodule',
+setup(name='crn_lung_nodule',
       version='0.1',
       description='NLP module for identifying lung nodules.',
       url='https://bitbucket.org/dcronkite/crn-lung-nodule',
