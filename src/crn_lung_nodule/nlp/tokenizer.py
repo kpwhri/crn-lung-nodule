@@ -1,6 +1,8 @@
 """
 Scott Halgrim
 Created 11/5/13 for CRN Lung Nodule project 
+
+TODO: Why are we using the built-in tokenizer for python source code?
 """
 
 import logging

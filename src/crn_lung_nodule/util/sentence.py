@@ -1,6 +1,6 @@
 import logging
 
-from crn_lung_nodule.crn_lung_nodule import get_lined_data
+from crn_lung_nodule.utils import get_lined_data
 
 from crn_lung_nodule.util.constants import *
 from crn_lung_nodule.nlp.tokenizer import Tokenizer

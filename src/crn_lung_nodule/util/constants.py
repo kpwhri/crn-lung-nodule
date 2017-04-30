@@ -1,8 +1,11 @@
 import re
 
+
+DANFORTH_20130919 = 'Danforth20130919'
+FARJAH_20140903 = 'Farjah20140903'
 ALGORITHMS = [
-    'DANFORTH',
-    'FARJAH'
+    FARJAH_20140903,
+    DANFORTH_20130919,
 ]
 
 POS_KEYWORD = 'posKeyword'
@@ -16,12 +19,11 @@ POS_KEYWORD_NO_QUAL_REQD = 'posKeywordNoQualReqd'
 SIZE_GT_30_MM = 'sizeGt30mm'
 SIZE_GT_5_MM = 'sizeGt5mm'
 SIZE_GT_0_MM = 'sizeGt0mm'
-DANFORTH_20130919 = 'Danforth20130919'
-FARJAH_20140903 = 'Farjah20140903'
 
 # phrase search methods
 TOKENS = 'phrase_search_tokens'
 STRING = 'phrase_search_string'
+PHRASE_SEARCH_METHODS = [TOKENS, STRING]
 
 DATA_MAPPING = {
     DANFORTH_20130919: {

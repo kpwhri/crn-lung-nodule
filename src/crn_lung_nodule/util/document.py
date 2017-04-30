@@ -31,11 +31,10 @@ class Document(object):
         logger.debug('Document {} created with {} characters'.format(self.name, len(self.contents)))
 
     def _ssplit(self) -> List[Sentence]:
-        text_sentences = SENT_SPLITTER.tokenize(self.contents)
-        self.sentences = [Sentence(ts, self, self.psm, self.r6psm)
-                          for ts in text_sentences]
-        logger.debug('Split %s into %d sentences'.format(self.name, len(text_sentences)))
-        return text_sentences
+        sentences = [Sentence(ts, self, self.psm, self.r6psm)
+                     for ts in SENT_SPLITTER.tokenize(self.contents)]
+        logger.debug('Split %s into %d sentences'.format(self.name, len(sentences)))
+        return sentences
 
     def danforth20130919(self):
         answer = False
@@ -100,11 +99,11 @@ class Document(object):
 
             # Step 1
             logger.debug('Entering step 1 for sent %d' % (i + 1))
-            if sent.eval_thing(POS_KEYWORD, 1):
+            if sent.eval_thing(POS_KEYWORD):
                 pass  # tagging done in evaluateThing
             else:
-                if prev_sent and prev_sent.eval_thing(POS_KEYWORD, 1) \
-                        and prev_sent.eval_thing(NLP_POSITIVE, 1):
+                if prev_sent and prev_sent.eval_thing(POS_KEYWORD) \
+                        and prev_sent.eval_thing(NLP_POSITIVE):
 
                     # continuing to search in step 1
                     # NB: algo says don't tag
@@ -118,7 +117,7 @@ class Document(object):
                     # Step 2
             logger.debug('Entering step 2 for sent %d' % (i + 1))
 
-            if not sent.eval_thing(ABS_DISQUAL_TERM, 2):
+            if not sent.eval_thing(ABS_DISQUAL_TERM):
                 pass  # "keep searching this sentence"
             else:
                 # go to next sentence
@@ -128,11 +127,11 @@ class Document(object):
 
                 # Step 3
             logger.debug('Entering step 3 for sent %d' % (i + 1))
-            sent.eval_thing(EXCLUDED_TERM, 3)  # tagging done in eval
+            sent.eval_thing(EXCLUDED_TERM)  # tagging done in eval
 
             # Step 4
             logger.debug('Entering step 4 for sent %d' % (i + 1))
-            sent.eval_thing(OFFSETTING_TERM, 4)  # tagging done in eval
+            sent.eval_thing(OFFSETTING_TERM)  # tagging done in eval
 
             # Step 5
             logger.debug('Entering step 5 for sent %d' % (i + 1))
@@ -165,14 +164,14 @@ class Document(object):
 
             # Step 7
             logger.debug('Entering step 7 for sent %d' % (i + 1))
-            if algo == FARJAH_20140903 and sent.eval_thing(SIZE_GT_0_MM, 7):
+            if algo == FARJAH_20140903 and sent.eval_thing(SIZE_GT_0_MM):
                 logger.info(str.format('Rule 7_Farjah\t{0}\tTrue', NLP_POSITIVE))
                 sent.set_thing(NLP_POSITIVE, True)
-            elif sent.eval_thing(SIZE_GT_30_MM, 7):
+            elif sent.eval_thing(SIZE_GT_30_MM):
                 logger.info(str.format('Rule 7_Danforth\t{0}\tTrue', NLP_NEGATIVE))
                 sent.set_thing(NLP_NEGATIVE, True)
                 continue  # move on to next sentence
-            elif sent.eval_thing(SIZE_GT_5_MM, 7):
+            elif sent.eval_thing(SIZE_GT_5_MM):
                 logger.info(str.format('Rule 7_Danforth\t{0}\tTrube', NLP_POSITIVE))
                 sent.set_thing(NLP_POSITIVE, True)
                 continue  # move on to next sentence

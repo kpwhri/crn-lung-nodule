@@ -17,4 +17,5 @@ class SentenceSplitterPunktStripped(PunktSentenceTokenizer):
         :param text:
         :param kwargs:
         """
-        return [x.strip() for x in PunktSentenceTokenizer.tokenize(self, text)]
+        for x in PunktSentenceTokenizer.tokenize(self, text):
+            yield x
