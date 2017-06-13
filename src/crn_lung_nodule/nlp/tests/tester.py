@@ -50,22 +50,12 @@ class TokenizerTester(unittest.TestCase):
         tknzr = tokenizer.Tokenizer('This is a test sentence.')
         self.assertIsInstance(tknzr, tokenizer.Tokenizer)
 
-    def test_Tokenizer_produces_generator_01(self):
-        """
-        Verify I actually get a generator function from produceGenerator
-        """
-        self.assertTrue(isgeneratorfunction(self.myTokenizer.produce_generator()))
-
     def test_Tokenizer_empty_sentence_returns_empty_list(self):
         """
         Test that empty string tokenized is zero tokens
         """
         tknzr = tokenizer.Tokenizer()
-        mygen = tknzr.produce_generator()
-        tokens = []
-
-        for tkn in mygen():
-            tokens.append(tkn)
+        tokens = tknzr.tokenize()[0]
 
         self.assertEqual(tokens, [])
 
