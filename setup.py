@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 setup(name='crn_lung_nodule',
-      version='0.1',
+      version='0.2',
       description='NLP module for identifying lung nodules.',
       url='https://bitbucket.org/dcronkite/crn-lung-nodule',
       author='dcronkite',
@@ -11,7 +11,7 @@ setup(name='crn_lung_nodule',
       classifiers=[  # from https://pypi.python.org/pypi?%3Aaction=list_classifiers
           'Development Status :: 3 - Alpha',
           'Intended Audience :: Science/Research',
-          'Programming Language :: Python :: 3 :: Only',
+          'Programming Lpanguage :: Python :: 3 :: Only',
       ],
       keywords='nlp information extraction',
       entry_points={

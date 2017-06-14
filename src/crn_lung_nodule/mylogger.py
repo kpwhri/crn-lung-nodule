@@ -50,7 +50,7 @@ def mkdir_p(path):
     """
     try:
         os.makedirs(path)  # just make all dirs in path
-    except OSError, exc:  # unless you get an error... # Python >2.5
+    except OSError as exc:  # unless you get an error... # Python >3
         if exc.errno == errno.EEXIST:  # and that errors no is the path exists
             pass  # that you can ignore
 
