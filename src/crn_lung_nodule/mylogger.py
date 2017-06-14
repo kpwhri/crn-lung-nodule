@@ -59,8 +59,8 @@ def mkdir_p(path):
             pass  # then ignore that too
         else:  # otherwise
             # write errno to stderr
-            print >> sys.stderr, 'exc.errno: %d' % (exc.errno)
-            logging.error('exc.errno: %d' % (exc.errno))  # log the errno
+            print(sys.stderr, 'exc.errno: %d'.format(exc.errno))
+            logging.error('exc.errno: %d'.format(exc.errno))  # log the errno
             raise  # and re-raise error
 
 
@@ -135,5 +135,3 @@ def config(logfn='', loglevel=logging.WARNING, logmode='a'):
                         filemode=logmode,
                         format='%(levelname) -10s %(asctime)s %(module)s ' + \
                                'at line %(lineno)d: %(message)s')
-
-    return

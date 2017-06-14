@@ -14,24 +14,30 @@ from crn_lung_nodule.util.document import Document, TOKENS, DANFORTH_20130919
 
 # get module logger
 logger = logging.getLogger('crn_lung_nodule.danforth_algorithm')
+CODEC = None
 
 
 def process_file(filename, phrase_search_method=TOKENS,
                  get_largest_nodule_size=False,
-                 rule6_phrase_search_method=None, algorithm=DANFORTH_20130919):
-    doc = Document(filename, phrase_search_method, rule6_phrase_search_method)
+                 rule6_phrase_search_method=None, algorithm=DANFORTH_20130919,
+                 codec=None):
+    global CODEC
+    doc = Document(filename, phrase_search_method, rule6_phrase_search_method, CODEC or codec)
+    CODEC = doc.codec  # save the discovered codec as the first try for next time
     return (doc.is_positive(algorithm),
             doc.get_max_nodule_size() if get_largest_nodule_size else None)
 
 
 def extract(indir, phrase_search_method=TOKENS, get_largest_nodule_size=False,
-            rule6_phrase_search_method=None, algorithm=DANFORTH_20130919):
+            rule6_phrase_search_method=None, algorithm=DANFORTH_20130919, codec=None):
     logger.debug('Processing files in {}.'.format(indir))
     for fn in sorted(os.listdir(indir)):
         ffn = os.path.join(indir, fn)
         decision, max_nodule_size = process_file(ffn, phrase_search_method,
                                                  get_largest_nodule_size,
-                                                 rule6_phrase_search_method, algorithm)
+                                                 rule6_phrase_search_method,
+                                                 algorithm,
+                                                 codec)
         logger.debug('{} classified as {}'.format(fn, str(decision)))
         if get_largest_nodule_size:
             yield fn, decision, max_nodule_size

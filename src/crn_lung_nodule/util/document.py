@@ -19,11 +19,24 @@ class Document(object):
     NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
     """
 
-    def __init__(self, fn, psm, r6psm=None):
+    def __init__(self, fn, psm, r6psm=None, codec=None):
         self.name = os.path.basename(fn)
         self.contents = None
-        with open(fn) as f:
-            self.contents = f.read()
+        self.codec = codec
+        e = None
+        for cdc in [self.codec if self.codec else 'cp1252', 'latin1', 'utf8']:
+            with open(fn, encoding=cdc) as f:
+                try:
+                    self.contents = f.read()
+                except UnicodeDecodeError as e:
+                    logger.warning('Failed to decode file {} with codec {}. Retrying.'.format(self.name, cdc))
+                else:
+                    self.codec = cdc
+                    if self.codec != codec:
+                        logger.info('Using codec {} for {}.'.format(self.codec, self.name))
+                    break
+        if not self.codec and e:
+            raise e
         self.psm = psm
         self.r6psm = r6psm if r6psm else psm
         self.sentences = self._ssplit()

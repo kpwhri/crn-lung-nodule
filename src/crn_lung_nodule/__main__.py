@@ -24,6 +24,9 @@ def main():
     parser.add_argument('--get-largest-nodule-size', action='store_true',
                         default=False,
                         help='Retrieve largest nodule size.')
+    parser.add_argument('--codec', default=None, required=False,
+                        help='Specify character encoding for input documents. '
+                             'See: https://docs.python.org/library/codecs.html#standard-encodings.')
     args = parser.parse_args()
 
     # todo: set logger
@@ -36,7 +39,7 @@ def main():
         out = sys.stdout
     out.write('File,Decision{}\n'.format(',MaxNoduleSize' if args.get_largest_nodule_size else ''))
     for args in extract(args.input_dir, args.psm, args.get_largest_nodule_size,
-                        args.r6psm, algorithm=args.algorithm):
+                        args.r6psm, algorithm=args.algorithm, codec=args.codec):
         out.write('{}\n'.format(','.join(str(x) for x in args)))
     out.close()
 
