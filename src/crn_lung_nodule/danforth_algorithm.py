@@ -10,7 +10,8 @@
 import logging
 import os
 
-from crn_lung_nodule.util.document import Document, TOKENS, DANFORTH_20130919
+from crn_lung_nodule.util.constants import STRING, FARJAH_20140903
+from crn_lung_nodule.util.document import Document, TOKENS
 
 # get module logger
 logger = logging.getLogger('crn_lung_nodule.danforth_algorithm')
@@ -40,9 +41,9 @@ def get_file_contents(fp, codec=None):
         raise e
 
 
-def process_document(name, contents, phrase_search_method=TOKENS,
+def process_document(name, contents, phrase_search_method=STRING,
                      get_largest_nodule_size=False,
-                     rule6_phrase_search_method=None, algorithm=DANFORTH_20130919):
+                     rule6_phrase_search_method=TOKENS, algorithm=FARJAH_20140903):
     doc = Document(name, contents, phrase_search_method, rule6_phrase_search_method)
     return (name,
             doc.is_positive(algorithm),
