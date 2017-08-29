@@ -59,7 +59,7 @@ def extract_iterators(name_iter, contents_iter, **kwargs):
         * phrase_search_method=TOKENS
         * get_largest_nodule_size=False
         * rule6_phrase_search_method=None
-        * algorithm=DANFORTH_20130919
+        * algorithm=FARJAH_20140903
     :return: name, decision, [max_nodule_size]
     """
     for name, contents in zip(name_iter, contents_iter):
@@ -77,7 +77,7 @@ def extract_files(indir, codec=None, **kwargs):
         * phrase_search_method=TOKENS
         * get_largest_nodule_size=False
         * rule6_phrase_search_method=None
-        * algorithm=DANFORTH_20130919
+        * algorithm=FARJAH_20140903
     :return: name, decision, [max_nodule_size]
     """
     logger.debug('Processing files in {}.'.format(indir))
