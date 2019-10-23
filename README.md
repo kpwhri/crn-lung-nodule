@@ -7,8 +7,8 @@ NLP module for identifying lung nodules.
 
 # Documentation #
 
-Home: https://github.com/kpwhri/crn-lung-nodule
-Old Version: https://bitbucket.org/dcronkite/crn-lung-nodule/
+* Home: https://github.com/kpwhri/crn-lung-nodule
+* Old Version: https://bitbucket.org/dcronkite/crn-lung-nodule/
 
 ## Install ##
 
