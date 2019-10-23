@@ -58,7 +58,7 @@ class BaseSentenceSplitter(object):
             self.knuthus = {}
             self.abbrevs = {}
         else:
-            conn = sqlite3.connect(pkg_resources.resource_filename('pytakes.nlp', 'data/ssplit.db'))
+            conn = sqlite3.connect(pkg_resources.resource_filename('crn_lung_nodule', 'data/ssplit.db'))
             cur = conn.cursor()
             cur.execute('SELECT abbr FROM abbreviations')
             self.knuthus = {x[0] for x in cur.fetchall()}
