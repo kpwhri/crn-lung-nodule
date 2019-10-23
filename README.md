@@ -9,7 +9,7 @@ NLP module for identifying lung nodules.
 
 ## Install ##
 
-* `git clone https://bitbucket.org/dcronkite/crn-lung-nodule`
+* `git clone ...`
 * `python setup.py install`
     * This will add the script `crn-algorithm`
     * You can also use the algorithm directly
