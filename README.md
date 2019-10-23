@@ -2,7 +2,7 @@ NLP module for identifying lung nodules.
 
 # Requirements #
 
-* Python 3.3+ (probably works Python 2)
+* Python 3.3+
 * nltk (for tokenizer)
 
 # Documentation #
@@ -149,6 +149,10 @@ This is the default, but you'll need to do some additional work with the output 
 * Alternative sentence splitting
 * Options to limit based on nodule size
 * Read-in CSV, SAS7BDAT, others?
+
+
+# License #
+MIT License: https://kpwhri.mit-license.org/
 
 
 # References #
