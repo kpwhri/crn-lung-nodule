@@ -43,8 +43,10 @@ def get_file_contents(fp, codec=None):
 
 def process_document(name, contents, phrase_search_method=STRING,
                      get_largest_nodule_size=False,
-                     rule6_phrase_search_method=TOKENS, algorithm=FARJAH_20140903):
-    doc = Document(name, contents, phrase_search_method, rule6_phrase_search_method)
+                     rule6_phrase_search_method=TOKENS, algorithm=FARJAH_20140903,
+                     use_base_sentence_splitter=False):
+    doc = Document(name, contents, phrase_search_method, rule6_phrase_search_method,
+                   use_base_sentence_splitter=use_base_sentence_splitter)
     return (name,
             doc.is_positive(algorithm),
             doc.get_max_nodule_size() if get_largest_nodule_size else None)
