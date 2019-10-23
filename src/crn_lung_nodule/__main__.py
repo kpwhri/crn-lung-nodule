@@ -32,6 +32,8 @@ def main():
     parser.add_argument('--codec', default=None, required=False,
                         help='Specify character encoding for input documents. '
                              'See: https://docs.python.org/library/codecs.html#standard-encodings.')
+    parser.add_argument('--use-base-sentence-splitter', action='store_true', default=False,
+                        help='Do not use the Punkt Tokenizer.')
     args = parser.parse_args()
 
     # todo: set logger
@@ -51,9 +53,11 @@ def main():
                               phrase_search_method=args.psm,
                               get_largest_nodule_size=args.get_largest_nodule_size,
                               rule6_phrase_search_method=args.r6psm,
-                              algorithm=args.algorithm, codec=args.codec):
+                              algorithm=args.algorithm, codec=args.codec,
+                              use_base_sentence_splitter=args.use_base_sentence_splitter):
         out.write('{}\n'.format(','.join(str(x) for x in args)))
     out.close()
+
 
 if __name__ == '__main__':
     main()

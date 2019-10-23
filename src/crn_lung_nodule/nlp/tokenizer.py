@@ -24,4 +24,4 @@ class Tokenizer:
         self.sentence = text
 
     def tokenize(self):
-        return [tok for tok in re.findall('(\w+|\S)', self.sentence)], 0
+        return [tok for tok in re.findall(r'(\w+|\S)', self.sentence)], 0

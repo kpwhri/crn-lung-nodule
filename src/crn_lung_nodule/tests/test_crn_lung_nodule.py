@@ -5,6 +5,8 @@
 """
 
 import unittest
+
+from crn_lung_nodule.nlp import BaseSentenceSplitter, SentenceSplitterPunktStripped, NLTK_SPLITTER
 from crn_lung_nodule.utils import has_keyword, sent_has_keyword, tokenize_sentence, file_to_sentences, ssplit
 
 
@@ -77,12 +79,27 @@ class CrnLungNoduleTester(unittest.TestCase):
 
     def test_splitText_01(self):
         """ Test results of sentence splitter """
-        result = ssplit('I have two sentences here. The previous sentence is true.')
+        if not NLTK_SPLITTER:
+            raise ModuleNotFoundError('Missing `nltk` install or punkt tokenizer configuration error.')
+        result = list(ssplit('I have two sentences here. The previous sentence is true.',
+                             SentenceSplitterPunktStripped))
         self.assertEqual(result, ['I have two sentences here.', 'The previous sentence is true.'])
 
     def test_splitFileText_01(self):
         """ Test results of file sentence splitter """
-        result = file_to_sentences(r'.\data\test_fileToSentences01.txt')
+        if not NLTK_SPLITTER:
+            raise ModuleNotFoundError('Missing `nltk` install or punkt tokenizer configuration error.')
+        result = list(file_to_sentences(r'.\data\test_fileToSentences01.txt', SentenceSplitterPunktStripped))
+        self.assertEqual(result, ['I have two sentences in this file.', 'The previous sentence is true.'])
+
+    def test_splitText_02(self):
+        """ Test results of sentence splitter """
+        result = list(ssplit('I have two sentences here. The previous sentence is true.', BaseSentenceSplitter))
+        self.assertEqual(result, ['I have two sentences here.', 'The previous sentence is true.'])
+
+    def test_splitFileText_02(self):
+        """ Test results of file sentence splitter """
+        result = list(file_to_sentences(r'.\data\test_fileToSentences01.txt', BaseSentenceSplitter))
         self.assertEqual(result, ['I have two sentences in this file.', 'The previous sentence is true.'])
 
 

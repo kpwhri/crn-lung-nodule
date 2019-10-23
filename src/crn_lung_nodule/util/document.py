@@ -1,15 +1,12 @@
 import logging
-import os
 from typing import List
 
+from crn_lung_nodule.nlp import BaseSentenceSplitter, SentenceSplitterPunktStripped, NLTK_SPLITTER
 from crn_lung_nodule.util.sentence import Sentence
 
 from crn_lung_nodule.util.constants import *
-from crn_lung_nodule.nlp.sentence_splitter \
-    import SentenceSplitterPunktStripped as SentSplitter
 
 logger = logging.getLogger('crn_lung_nodule.util.document')
-SENT_SPLITTER = SentSplitter()
 
 
 class Document(object):
@@ -19,18 +16,22 @@ class Document(object):
     NLP_algorithm_Revisions_(09 19 2013)_CZ.doc
     """
 
-    def __init__(self, name, contents, psm, r6psm=None):
+    def __init__(self, name, contents, psm, r6psm=None, use_base_sentence_splitter=False):
         self.name = name
         self.contents = contents
         self.psm = psm
         self.r6psm = r6psm if r6psm else psm
         self.sentences = self._ssplit()
+        if use_base_sentence_splitter or not NLTK_SPLITTER:
+            self.splitter = BaseSentenceSplitter()
+        else:
+            self.splitter = SentenceSplitterPunktStripped()
 
         logger.debug('Document {} created with {} characters'.format(self.name, len(self.contents)))
 
     def _ssplit(self) -> List[Sentence]:
         sentences = [Sentence(ts, self, self.psm, self.r6psm)
-                     for ts in SENT_SPLITTER.tokenize(self.contents)]
+                     for ts in self.splitter.tokenize(self.contents)]
         logger.debug('Split %s into %d sentences'.format(self.name, len(sentences)))
         return sentences
 

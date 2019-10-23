@@ -11,13 +11,11 @@ import pkg_resources
 from crn_lung_nodule.nlp.tokenizer import Tokenizer
 
 from crn_lung_nodule.util.constants import *
-from crn_lung_nodule.nlp.sentence_splitter import SentenceSplitterPunktStripped
 
-DEFAULT_SENT_SPLITTER = SentenceSplitterPunktStripped
 DATA_CONNECTION = None
 
 
-def ssplit(text, splitter=DEFAULT_SENT_SPLITTER):
+def ssplit(text, splitter):
     """
     Splits text string into list of sentence text strings using splitter.
     splitter must have tokenize method
@@ -25,7 +23,7 @@ def ssplit(text, splitter=DEFAULT_SENT_SPLITTER):
     return splitter().tokenize(text)
 
 
-def file_to_sentences(fn, splitter=DEFAULT_SENT_SPLITTER):
+def file_to_sentences(fn, splitter):
     """
     Splits text in a file into list of sentence text strings using splitter.
     splitter must have tokenize method
