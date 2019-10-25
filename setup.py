@@ -23,6 +23,6 @@ setup(name='crn_lung_nodule',
       install_requires=['nltk'],
       package_dir={'': 'src'},
       packages=setuptools.find_packages('src'),
-      package_data={'crn_lung_nodule': ['data/keywords.db']},
+      package_data={'crn_lung_nodule': ['data/keywords.db', 'data/ssplit.db']},
       zip_safe=False
       )

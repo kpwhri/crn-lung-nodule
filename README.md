@@ -3,7 +3,7 @@ NLP module for identifying lung nodules.
 # Requirements #
 
 * Python 3.3+
-* nltk (for tokenizer)
+* nltk (optional, for tokenizer)
 
 # Documentation #
 
@@ -18,6 +18,10 @@ NLP module for identifying lung nodules.
     * You can also use the algorithm directly
         * `danforth_algorithm.extract_iterators`: when in list
         * `danforth_algorithm.extract_files`: a directory of files
+        
+### Not using nltk ###
+
+If you do not want to configure the Punkt tokenizer to do sentence splitting, you can use the built-in sentence splitter, however, this will alter the algorithm's performance. In our own experiments, prevalence was reduced by 6%.
 
 ## Usage ##
 

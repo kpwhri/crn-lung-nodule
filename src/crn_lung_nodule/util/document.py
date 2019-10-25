@@ -21,11 +21,11 @@ class Document(object):
         self.contents = contents
         self.psm = psm
         self.r6psm = r6psm if r6psm else psm
-        self.sentences = self._ssplit()
         if use_base_sentence_splitter or not NLTK_SPLITTER:
             self.splitter = BaseSentenceSplitter()
         else:
             self.splitter = SentenceSplitterPunktStripped()
+        self.sentences = self._ssplit()  # requires splitter to be defined
 
         logger.debug('Document {} created with {} characters'.format(self.name, len(self.contents)))
 
